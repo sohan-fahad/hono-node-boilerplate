@@ -34,7 +34,7 @@ export class AuthService {
     /**
      * Register a new user
      */
-    async register(data: RegisterDto): Promise<{ user: Omit<User, "password"> }> {
+    async register(data: RegisterDto): Promise<Omit<User, "password">> {
         // Check if user already exists
         const existingUser = await db
             .select()
@@ -67,9 +67,7 @@ export class AuthService {
         // Remove password from response
         const { password: _, ...userWithoutPassword } = user;
 
-        return {
-            user: userWithoutPassword,
-        };
+        return userWithoutPassword as Omit<User, "password">;
     }
 
     /**
@@ -261,6 +259,25 @@ export class AuthService {
         };
     }
 
+    /**
+     * Get user by ID
+     */
+    async getUserById(userId: number): Promise<Omit<User, "password">> {
+        const result = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, userId))
+            .limit(1);
+
+        if (result.length === 0) {
+            throw new Error("User not found");
+        }
+
+        const user = result[0];
+        const { password: _, ...userWithoutPassword } = user;
+
+        return userWithoutPassword;
+    }
 
     /**
      * Verify email

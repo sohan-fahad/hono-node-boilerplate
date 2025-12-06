@@ -5,6 +5,7 @@ export * from "./decorators/controller.decorator.js";
 export * from "./decorators/validation.decorator.js";
 export * from "./decorators/zod-validation.decorator.js";
 export * from "./decorators/query-validation.decorator.js";
+export * from "./decorators/param.decorator.js";
 
 // Dependency Injection
 export * from "./di/module.factory.js";

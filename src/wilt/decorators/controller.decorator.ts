@@ -1,5 +1,6 @@
 import type { Hono } from "hono";
 import { injectable, inject as tsyringeInject } from "tsyringe";
+import { processParams } from "./param.decorator.js";
 
 export interface RouteMetadata {
 	method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -94,6 +95,9 @@ function createMethodDecorator(
 				handler: propertyKey,
 			});
 
+			// Process parameter decorators (@Body, @Query, @Param, @Ctx)
+			processParams(target, propertyKey, descriptor);
+
 			return descriptor;
 		};
 }
@@ -119,13 +123,13 @@ export function registerControllerRoutes(
 
 		// Check if the handler has middleware attached from decorators
 		const methodMiddlewares = (handler as any).middlewares || [];
-		
+
 		// Create the final handler that applies middleware first, then the actual handler
-		const finalHandler = methodMiddlewares.length > 0 
+		const finalHandler = methodMiddlewares.length > 0
 			? async (c: any) => {
 				// Apply each middleware in sequence
 				let index = 0;
-				
+
 				const next = async (): Promise<Response | void> => {
 					if (index < methodMiddlewares.length) {
 						const middleware = methodMiddlewares[index++];
@@ -135,7 +139,7 @@ export function registerControllerRoutes(
 						return await handler.call(controller, c);
 					}
 				};
-				
+
 				return await next() as Response;
 			}
 			: handler.bind(controller);

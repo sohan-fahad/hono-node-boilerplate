@@ -1,4 +1,4 @@
-import { Controller, Post, Get, ZodValidate, ResponseUtil, Inject } from "@wilt";
+import { Controller, Post, Get, Body, Ctx, ResponseUtil, Inject } from "@wilt";
 import type { Context } from "hono";
 import {
     type RegisterDto,
@@ -15,6 +15,8 @@ import {
     ChangePasswordSchema,
 } from "./auth.dto.js";
 import { AuthService } from "./auth.service.js";
+import { SuccessResponse } from "@src/wilt/utils/successResponse.type.js";
+import { ErrorResponse } from "@src/wilt/utils/errorResponse.type.js";
 
 @Controller("/auth")
 export class AuthController {
@@ -23,110 +25,113 @@ export class AuthController {
     ) { }
 
     /**
-     * Register a new user
+     * Register a new user (NestJS-style with @Body decorator)
      * POST /auth/register
      */
     @Post("/register")
-    @ZodValidate(RegisterSchema)
-    async register(c: Context): Promise<Response> {
+    async register(@Body(RegisterSchema) data: RegisterDto) {
         try {
-            const data = c.get("validatedData") as RegisterDto;
-
             const result = await this.authService.register(data);
 
-            return ResponseUtil.success(
-                c,
-                result,
+            return new SuccessResponse(
                 "User registered successfully. Please check your email to verify your account.",
+                result,
                 201
             );
         } catch (error: any) {
-            return ResponseUtil.error(c, error.message || "Registration failed", 400);
+            return new ErrorResponse({
+                message: error.message || "Registration failed",
+                statusCode: 400
+            });
         }
     }
 
     /**
-     * Login user
+     * Login user (NestJS-style with @Body decorator)
      * POST /auth/login
      */
     @Post("/login")
-    @ZodValidate(LoginSchema)
-    async login(c: Context): Promise<Response> {
+    async login(@Body(LoginSchema) credentials: LoginDto) {
         try {
-            const data = c.get("validatedData") as LoginDto;
+            const result = await this.authService.login(credentials);
 
-            const result = await this.authService.login(data);
-
-            return ResponseUtil.success(c, result, "Login successful");
+            return new SuccessResponse(
+                "Login successful",
+                result,
+                200
+            );
         } catch (error: any) {
-            return ResponseUtil.error(c, error.message || "Login failed", 401);
+            return new ErrorResponse({
+                message: error.message || "Login failed",
+                statusCode: 401
+            });
         }
     }
 
 
     /**
-     * Forgot password - Generate reset token
+     * Forgot password - Generate reset token (NestJS-style)
      * POST /auth/forgot-password
      */
     @Post("/forgot-password")
-    @ZodValidate(ForgotPasswordSchema)
-    async forgotPassword(c: Context): Promise<Response> {
+    async forgotPassword(@Body(ForgotPasswordSchema) data: ForgotPasswordDto) {
         try {
-            const data = c.get("validatedData") as ForgotPasswordDto;
-
             const result = await this.authService.forgotPassword(data);
 
-            return ResponseUtil.success(
-                c,
+            return new SuccessResponse(
+                "Password reset token sent successfully",
                 { resetToken: result.resetToken },
-                "Password reset token sent successfully"
+                200
             );
         } catch (error: any) {
-            return ResponseUtil.error(
-                c,
-                error.message || "Failed to process request",
-                400
-            );
+            return new ErrorResponse({
+                message: error.message || "Failed to process request",
+                statusCode: 400
+            });
         }
     }
 
     /**
-     * Reset password with token
+     * Reset password with token (NestJS-style)
      * POST /auth/reset-password
      */
     @Post("/reset-password")
-    @ZodValidate(ResetPasswordSchema)
-    async resetPassword(c: Context): Promise<Response> {
+    async resetPassword(@Body(ResetPasswordSchema) data: ResetPasswordDto) {
         try {
-            const data = c.get("validatedData") as ResetPasswordDto;
-
             const result = await this.authService.resetPassword(data);
 
-            return ResponseUtil.success(c, result, "Password reset successfully");
-        } catch (error: any) {
-            return ResponseUtil.error(
-                c,
-                error.message || "Password reset failed",
-                400
+            return new SuccessResponse(
+                "Password reset successfully",
+                result,
+                200
             );
+        } catch (error: any) {
+            return new ErrorResponse({
+                message: error.message || "Password reset failed",
+                statusCode: 400
+            });
         }
     }
 
     /**
-     * Refresh access token
+     * Refresh access token (NestJS-style)
      * POST /auth/refresh
      */
     @Post("/refresh")
-    @ZodValidate(RefreshTokenSchema)
-    async refreshToken(c: Context): Promise<Response> {
+    async refreshToken(@Body(RefreshTokenSchema) data: RefreshTokenDto) {
         try {
-            const data = c.get("validatedData") as RefreshTokenDto;
-
             const result = await this.authService.refreshToken(data);
 
-            return ResponseUtil.success(c, result, "Token refreshed successfully");
+            return new SuccessResponse(
+                "Token refreshed successfully",
+                result,
+                200
+            );
         } catch (error: any) {
-            return ResponseUtil.error(c, error.message || "Token refresh failed", 401);
+            return new ErrorResponse({
+                message: error.message || "Token refresh failed",
+                statusCode: 401
+            });
         }
     }
 }
