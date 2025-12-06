@@ -1,18 +1,15 @@
-import { Controller, Post, Get, Body, Ctx, ResponseUtil, Inject } from "@wilt";
-import type { Context } from "hono";
+import { Controller, Post, Body, Inject } from "@wilt";
 import {
     type RegisterDto,
     type LoginDto,
     type ForgotPasswordDto,
     type ResetPasswordDto,
     type RefreshTokenDto,
-    type ChangePasswordDto,
     RegisterSchema,
     LoginSchema,
     ForgotPasswordSchema,
     ResetPasswordSchema,
     RefreshTokenSchema,
-    ChangePasswordSchema,
 } from "./auth.dto.js";
 import { AuthService } from "./auth.service.js";
 import { SuccessResponse } from "@src/wilt/utils/successResponse.type.js";

@@ -16,7 +16,6 @@ export * from "./interfaces/base-response.interface.js";
 export * from "./middleware/auth.middleware.js";
 export * from "./middleware/index.js";
 // Utils
-export * from "./utils/response.util.js";
 
 
 // Auth decorators
