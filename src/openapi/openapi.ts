@@ -124,16 +124,14 @@ All endpoints follow a consistent error response format with appropriate HTTP st
                                 example: {
                                     success: true,
                                     data: {
-                                        user: {
-                                            id: 1,
-                                            email: "john@example.com",
-                                            name: "John Doe",
-                                            role: "user",
-                                            isActive: true,
-                                            emailVerified: false,
-                                            createdAt: "2024-01-15T10:30:00Z",
-                                            updatedAt: "2024-01-15T10:30:00Z"
-                                        }
+                                        id: 1,
+                                        email: "john@example.com",
+                                        name: "John Doe",
+                                        role: "user",
+                                        isActive: true,
+                                        emailVerified: false,
+                                        createdAt: "2024-01-15T10:30:00Z",
+                                        updatedAt: "2024-01-15T10:30:00Z"
                                     },
                                     message: "User registered successfully. Please check your email to verify your account.",
                                     timestamp: "2024-01-15T10:30:00Z"

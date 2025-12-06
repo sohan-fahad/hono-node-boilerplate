@@ -6,7 +6,6 @@ import { logger } from "@wilt/utils/logger.util.js";
 // Create PostgreSQL connection pool
 const pool = new Pool({
     connectionString: ENV.DATABASE_URL,
-
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
@@ -15,6 +14,10 @@ const pool = new Pool({
 // Handle pool errors
 pool.on("error", (err) => {
     logger.error(`Unexpected database error: ${err.message}`, "Database");
+});
+
+pool.on("connect", (client) => {
+    logger.info("Database connection established", "Database");
 });
 
 // Create Drizzle instance

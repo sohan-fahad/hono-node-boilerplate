@@ -174,7 +174,7 @@ export class AuthService {
         }
 
         // Check if token is expired
-        const isExpired = this.jwtService.isJwtExpired(decoded.exp);
+        const isExpired = this.jwtService.isExpired(data.token);
         if (isExpired) {
             throw new Error("Reset token has expired");
         }
@@ -219,7 +219,7 @@ export class AuthService {
         }
 
         // Check if token is expired
-        const isExpired = this.jwtService.isJwtExpired(decoded.exp);
+        const isExpired = this.jwtService.isExpired(data.refreshToken);
         if (isExpired) {
             throw new Error("Refresh token has expired");
         }
